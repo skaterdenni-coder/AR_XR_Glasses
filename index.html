@@ -100,7 +100,8 @@
     </div>
 
     <div class="card viewerBox" id="viewerBox">
-      <model-viewer id="mv" camera-controls auto-rotate ar ar-modes="webxr scene-viewer quick-look" bounds="tight" autoplay></model-viewer>
+      <!-- ar-scale="fixed" verhindert, dass der User das Modell im AR-Modus manuell wieder groß skaliert -->
+      <model-viewer id="mv" camera-controls auto-rotate ar ar-modes="webxr scene-viewer quick-look" bounds="tight" autoplay ar-scale="fixed"></model-viewer>
       <div class="viewerBar">
         <button class="ui" id="btnReset">↩️ Reset</button>
         <button class="ui" id="btnToggleAnim">⏸ Animation Stoppen</button>
@@ -125,6 +126,15 @@
     const btnToggleAnim = document.getElementById('btnToggleAnim');
 
     let currentUrl = "";
+
+    // WebXR-Logik: Modell beim Betreten der AR-Ansicht auf 50% verkleinern
+    mv.addEventListener('ar-status', (event) => {
+      if (event.detail.status === 'object-placed' || event.detail.status === 'session-started') {
+        mv.scale = '0.5 0.5 0.5'; // Halbiert die Größe in X, Y und Z
+      } else if (event.detail.status === 'not-presenting') {
+        mv.scale = '1 1 1'; // Setzt das Modell im normalen Browser-Viewer wieder auf 100%
+      }
+    });
 
     function showStatus(msg, type) {
       status.textContent = msg;
