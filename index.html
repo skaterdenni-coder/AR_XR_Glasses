@@ -9,46 +9,52 @@
   
   <style>
     :root{
-      --bg:#000000; --text:#ff2f; --muted:#555; --card:#fff; --border:#e6e6e6;
+      /* Hintergrund auf absolutes OLED-Schwarz gesetzt */
+      --bg:#000000; 
+      --text:#ffffff; 
+      --muted:#aaaaaa; 
+      --card:#000000; 
+      --border:#333333;
       --btn2:#2d7d46;
     }
     * { box-sizing: border-box; }
     body{ margin:0; font-family: Arial, sans-serif; background:var(--bg); color:var(--text); }
-    .wrap{ max-width: 980px; margin: 0 auto; padding: 26px 16px 42px; text-align:center; }
-    h1{ margin: 6px 0 10px; font-size: 34px; font-weight: 800; }
+    .wrap{ max-width: 980px; margin: 0 auto; padding: 26px 16px 42px; text-align:center; background: var(--bg); }
+    h1{ margin: 6px 0 10px; font-size: 34px; font-weight: 800; color: var(--text); }
     
     .card{
       background:var(--card); border:1px solid var(--border); border-radius:14px;
       padding: 20px; margin: 14px auto;
-      box-shadow: 0 1px 0 rgba(0,0,0,.03);
     }
     
     .uploadBox{
-      background: #f0f8f4; border: 2px dashed var(--btn2);
+      /* Leicht dunkleres Grau für die Upload-Box, damit sie sich vom Schwarz abhebt */
+      background: #111111; border: 2px dashed var(--btn2);
       border-radius: 12px; padding: 40px 20px; text-align: center;
       cursor: pointer; transition: all 0.3s;
     }
-    .uploadBox p{ margin: 0; color: var(--muted); font-size: 16px; }
+    .uploadBox p{ margin: 0; color: var(--text); font-size: 16px; }
     .uploadBox input{ display: none; }
     
     .status{
       padding: 12px; margin: 10px 0; border-radius: 6px;
       display: none; font-weight: 600; text-align: center;
     }
-    .status.success{ display: block; background: #d4edda; color: #155724; }
-    .status.loading{ display: block; background: #d1ecf1; color: #0c5460; }
+    .status.success{ display: block; background: #1b4322; color: #d4edda; border: 1px solid #2d7d46; }
+    .status.loading{ display: block; background: #163b45; color: #d1ecf1; border: 1px solid #0c5460; }
 
-    #shareArea { display: none; margin-top: 15px; }
+    #shareArea { margin-top: 15px; display: none; }
     .share-flex { 
       display: flex; align-items: center; justify-content: center; 
-      gap: 20px; background: #f9f9f9; padding: 15px; border-radius: 10px; border: 1px solid #eee;
+      gap: 20px; background: #111111; padding: 15px; border-radius: 10px; border: 1px solid var(--border);
     }
     .link-box { flex: 1; text-align: left; }
     .shareLinkBox {
-      background: #fff; border: 1px solid #ccc; padding: 10px;
+      background: #222222; border: 1px solid var(--border); padding: 10px;
       margin-top: 5px; border-radius: 8px; font-family: monospace;
-      font-size: 12px; color: #004a99; cursor: pointer; word-break: break-all;
+      font-size: 12px; color: #66b2ff; cursor: pointer; word-break: break-all;
     }
+    /* QR-Code bleibt weiß/hell, damit er scannbar ist */
     #qrcode img { border: 4px solid #fff; border-radius: 4px; }
 
     .viewerBox{
@@ -59,18 +65,18 @@
     
     model-viewer{
       width: 100%; height: 60vh; min-height: 380px;
-      background:#fff; border-radius: 12px; border: 1px solid var(--border);
+      /* Komplett transparent/schwarz für den OLED-Durchsicht-Effekt */
+      background:#000000; border-radius: 12px; border: 1px solid var(--border);
     }
     
     .viewerBar{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin: 12px 0 0; }
     button.ui{
-      border:1px solid var(--border); background:#fff; color:#111;
+      border:1px solid var(--border); background:#222222; color:var(--text);
       border-radius: 10px; padding: 10px 12px; font-weight: 700; cursor:pointer;
       display: flex; align-items: center; gap: 5px;
     }
-    button.ui:hover { background: #f0f0f0; }
+    button.ui:hover { background: #333333; }
 
-    /* Animation-Button standardmäßig ausblenden */
     #btnToggleAnim { display: none; }
   </style>
 </head>
@@ -78,7 +84,7 @@
 <body>
   <div class="wrap">
     <h1>AR Model Viewer</h1>
-    <p>Lade dein 3D-Modell hoch oder betrachte das geteilte Modell</p>
+    <p style="color: var(--muted);">Lade dein 3D-Modell hoch oder betrachte das geteilte Modell</p>
 
     <div class="card" id="uploadCard">
       <div class="uploadBox" id="uploadBox">
@@ -92,7 +98,7 @@
           <div class="link-box">
             <label style="font-size: 12px; font-weight: bold;">Teilen-Link:</label>
             <div id="shareLinkDisplay" class="shareLinkBox" onclick="copyLink()"></div>
-            <small>(Klicken zum Kopieren)</small>
+            <small style="color: var(--muted);">(Klicken zum Kopieren)</small>
           </div>
           <div id="qrcode"></div>
         </div>
@@ -100,7 +106,7 @@
     </div>
 
     <div class="card viewerBox" id="viewerBox">
-      <!-- ar-scale="fixed" verhindert, dass der User das Modell im AR-Modus manuell wieder groß skaliert -->
+      <!-- Hintergrundfarbe des Environment-Grids explizit deaktiviert für echtes Schwarz -->
       <model-viewer id="mv" camera-controls auto-rotate ar ar-modes="webxr scene-viewer quick-look" bounds="tight" autoplay ar-scale="fixed"></model-viewer>
       <div class="viewerBar">
         <button class="ui" id="btnReset">↩️ Reset</button>
@@ -109,7 +115,7 @@
         <button class="ui" id="btnAR">AR starten</button>
         <button class="ui" id="btnDownload" style="display:none;">💾 Download .glb</button>
       </div>
-      <p style="font-size: 11px; margin-top: 15px; color: #888;">Created by Simba</p>
+      <p style="font-size: 11px; margin-top: 15px; color: var(--muted);">Created by Simba</p>
     </div>
   </div>
 
@@ -130,9 +136,9 @@
     // WebXR-Logik: Modell beim Betreten der AR-Ansicht auf 50% verkleinern
     mv.addEventListener('ar-status', (event) => {
       if (event.detail.status === 'object-placed' || event.detail.status === 'session-started') {
-        mv.scale = '0.5 0.5 0.5'; // Halbiert die Größe in X, Y und Z
+        mv.scale = '0.5 0.5 0.5'; 
       } else if (event.detail.status === 'not-presenting') {
-        mv.scale = '1 1 1'; // Setzt das Modell im normalen Browser-Viewer wieder auf 100%
+        mv.scale = '1 1 1'; 
       }
     });
 
@@ -142,7 +148,6 @@
       status.style.display = 'block';
     }
 
-    // Erzeugt den Zeitstempel-Namen
     function getTimestampName() {
       const now = new Date();
       const tag = String(now.getDate()).padStart(2, '0');
@@ -157,14 +162,11 @@
         alert("Download erst nach Cloud-Upload verfügbar.");
         return;
       }
-      
       const fileName = getTimestampName();
-      
       try {
         const response = await fetch(url);
         const blob = await response.blob();
         const blobUrl = URL.createObjectURL(blob);
-        
         const a = document.createElement('a');
         a.href = blobUrl;
         a.download = fileName;
@@ -193,7 +195,6 @@
       shareArea.style.display = "none";
       btnDownload.style.display = "none";
       
-      // Button zurücksetzen und verstecken, bis das neue Modell geladen ist
       btnToggleAnim.innerHTML = "⏸ Animation Stoppen"; 
       btnToggleAnim.style.display = "none";
 
@@ -217,14 +218,13 @@
         showStatus("✅ Modell bereit & Link erstellt!", "success");
         
         mv.src = fileUrl;
-        mv.play(); // Verhindert Stoppen beim URL-Wechsel
+        mv.play(); 
         btnDownload.style.display = "inline-block";
       } catch(e) {
         showStatus("❌ Nur lokale Ansicht (Cloud-Upload fehlgeschlagen)", "loading");
       }
     }
 
-    // Prüfen, ob das geladene Modell Animationen besitzt
     mv.addEventListener('load', () => {
       if (mv.availableAnimations && mv.availableAnimations.length > 0) {
         btnToggleAnim.style.display = "inline-flex";
@@ -233,7 +233,6 @@
       }
     });
 
-    // Logik für den Start/Stopp-Button
     btnToggleAnim.onclick = () => {
       if (mv.paused) {
         mv.play();
@@ -248,7 +247,6 @@
       navigator.clipboard.writeText(currentUrl).then(() => alert("Link kopiert!"));
     };
 
-    // Reset-Button: Kamera zurücksetzen UND Animation an den Anfang spulen
     document.getElementById('btnReset').onclick = () => { 
       mv.cameraOrbit = '0deg 75deg auto'; 
       mv.currentTime = 0;
